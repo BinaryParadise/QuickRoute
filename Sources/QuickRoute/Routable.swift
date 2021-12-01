@@ -17,11 +17,26 @@ import Foundation
 }
 
 public struct RouteContext {
-    var done: ((_ data: Any?) -> Void)?
+    var finished: ((_ data: Any?, Error?) -> Void)?
+    
+    func done(_ data: Any? = nil, _ error: Error? = nil) {
+        finished?(data, error)
+    }
 }
 
 public typealias RouteHandler = (_ ctx: RouteContext) -> Void
 
 protocol RouteRegistration {
     static func register()
+}
+
+public enum RouteError: Error, CustomStringConvertible {
+    case notFound(String)
+    
+    public var description: String {
+        switch self {
+        case .notFound(let url):
+            return "Can't find route with url: \(url)"
+        }
+    }
 }
